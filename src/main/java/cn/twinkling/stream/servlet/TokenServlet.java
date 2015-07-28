@@ -26,6 +26,8 @@ public class TokenServlet extends HttpServlet {
 	static final String SERVER_FIELD = "server";
 	static final String SUCCESS = "success";
 	static final String MESSAGE = "message";
+	static final String USERID = "userId";
+	
 	
 	@Override
 	public void init() throws ServletException {
@@ -34,9 +36,12 @@ public class TokenServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		req.setCharacterEncoding("utf-8");
 		String name = req.getParameter(FILE_NAME_FIELD);
 		String size = req.getParameter(FILE_SIZE_FIELD);
-		String token = TokenUtil.generateToken(name, size);
+		String userId = req.getParameter(USERID);
+		userId=new String(userId.getBytes("UTF-8"));
+		String token = TokenUtil.generateToken(name, size, userId);
 		
 		PrintWriter writer = resp.getWriter();
 		
@@ -57,6 +62,7 @@ public class TokenServlet extends HttpServlet {
 	@Override
 	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		req.setCharacterEncoding("utf-8");
 		super.doHead(req, resp);
 	}
 

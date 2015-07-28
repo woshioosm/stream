@@ -40,8 +40,9 @@ public class StreamServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		req.setCharacterEncoding("utf-8");
 		doOptions(req, resp);
-
+		final String userId = req.getParameter(TokenServlet.USERID);
 		final String token = req.getParameter(TokenServlet.TOKEN_FIELD);
 		final String size = req.getParameter(TokenServlet.FILE_SIZE_FIELD);
 		final String fileName = req.getParameter(TokenServlet.FILE_NAME_FIELD);
@@ -54,11 +55,12 @@ public class StreamServlet extends HttpServlet {
 		boolean success = true;
 		String message = "";
 		try {
-			File f = IoUtil.getTokenedFile(token);
+			File f = IoUtil.getTokenedFile(token,userId);
+			f.setWritable(true, false);
 			start = f.length();
 			/** file size is 0 bytes. */
 			if (token.endsWith("_0") && "0".equals(size) && 0 == start)
-				f.renameTo(IoUtil.getFile(fileName));
+				f.renameTo(IoUtil.getFile(fileName,userId));
 		} catch (FileNotFoundException fne) {
 			message = "Error: " + fne.getMessage();
 			success = false;
@@ -77,8 +79,9 @@ public class StreamServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		req.setCharacterEncoding("utf-8");
 		doOptions(req, resp);
-		
+		final String userId = req.getParameter(TokenServlet.USERID);
 		final String token = req.getParameter(TokenServlet.TOKEN_FIELD);
 		final String fileName = req.getParameter(TokenServlet.FILE_NAME_FIELD);
 		Range range = IoUtil.parseRange(req);
@@ -93,7 +96,8 @@ public class StreamServlet extends HttpServlet {
 		long start = 0;
 		boolean success = true;
 		String message = "";
-		File f = IoUtil.getTokenedFile(token);
+		File f = IoUtil.getTokenedFile(token,userId);
+		f.setWritable(true, false);
 		try {
 			if (f.length() != range.getFrom()) {
 				/** drop this uploaded data */
@@ -124,7 +128,7 @@ public class StreamServlet extends HttpServlet {
 			/** rename the file */
 			if (range.getSize() == start) {
 				/** fix the `renameTo` bug */
-				File dst = IoUtil.getFile(fileName);
+				File dst = IoUtil.getFile(fileName,userId);
 				dst.delete();
 				f.renameTo(dst);
 				System.out.println("TK: `" + token + "`, NE: `" + fileName + "`");

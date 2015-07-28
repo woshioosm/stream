@@ -1425,6 +1425,7 @@
 			var xhr = window.XMLHttpRequest ? new XMLHttpRequest : new ActiveXObject("Microsoft.XMLHTTP");
 			
 			var vars = {
+				userId:  this.config.userId,
 				name:	 file.get('name'),
 				type: file.get('type'),
 				size: file.get('size'),

@@ -30,11 +30,11 @@ public class IoUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public static File getFile(String filename) throws IOException {
+	public static File getFile(String filename,String userId) throws IOException {
 		if (filename == null || filename.isEmpty())
 			return null;
 		String name = filename.replaceAll("/", Matcher.quoteReplacement(File.separator));
-		File f = new File(Configurations.getFileRepository() + File.separator + name);
+		File f = new File(Configurations.getUserFileRepository(userId) + File.separator + name);
 		if (!f.getParentFile().exists())
 			f.getParentFile().mkdirs();
 		if (!f.exists())
@@ -49,11 +49,11 @@ public class IoUtil {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static File getTokenedFile(String key) throws IOException {
+	public static File getTokenedFile(String key,String userId) throws IOException {
 		if (key == null || key.isEmpty())
 			return null;
 
-		File f = new File(Configurations.getFileRepository() + File.separator + key);
+		File f = new File(Configurations.getUserFileRepository(userId) + File.separator + key);
 		if (!f.getParentFile().exists())
 			f.getParentFile().mkdirs();
 		if (!f.exists())
@@ -62,11 +62,11 @@ public class IoUtil {
 		return f;
 	}
 	
-	public static void storeToken(String key) throws IOException {
+	public static void storeToken(String key,String userId) throws IOException {
 		if (key == null || key.isEmpty())
 			return;
 
-		File f = new File(Configurations.getFileRepository() + File.separator + key);
+		File f = new File(Configurations.getUserFileRepository(userId) + File.separator + key);
 		if (!f.getParentFile().exists())
 			f.getParentFile().mkdirs();
 		if (!f.exists())
@@ -111,9 +111,9 @@ public class IoUtil {
 	/**
 	 * From the InputStream, write its data to the given file.
 	 */
-	public static long streaming(InputStream in, String key, String fileName) throws IOException {
+	public static long streaming(InputStream in, String key, String fileName,String userId) throws IOException {
 		OutputStream out = null;
-		File f = getTokenedFile(key);
+		File f = getTokenedFile(key,userId);
 		try {
 			out = new FileOutputStream(f);
 
@@ -127,11 +127,11 @@ public class IoUtil {
 			close(out);
 		}
 		/** rename the file * fix the `renameTo` bug */
-		File dst = IoUtil.getFile(fileName);
+		File dst = IoUtil.getFile(fileName,userId);
 		dst.delete();
 		f.renameTo(dst);
 		
-		long length = getFile(fileName).length();
+		long length = getFile(fileName,userId).length();
 		/** if `STREAM_DELETE_FINISH`, then delete it. */
 		if (Configurations.isDeleteFinished()) {
 			dst.delete();

@@ -15,7 +15,7 @@ public class TokenUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String generateToken(String name, String size)
+	public static String generateToken(String name, String size, String userId)
 			throws IOException {
 		if (name == null || size == null)
 			return "";
@@ -23,7 +23,7 @@ public class TokenUtil {
 		try {
 			String token = (code > 0 ? "A" : "B") + Math.abs(code) + "_" + size.trim();
 			/** TODO: store your token, here just create a file */
-			IoUtil.storeToken(token);
+			IoUtil.storeToken(token,userId);
 			
 			return token;
 		} catch (Exception e) {

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Stream上传插件 - Bootstrap Demo</title>
+<title>上传</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="/css/stream-v1.css" rel="stylesheet" type="text/css">
+<link href="./css/stream-v1.css" rel="stylesheet" type="text/css">
 <link href="http://cdn.bootcss.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 <!--[if lt IE 9]>
     <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
@@ -16,20 +16,33 @@
 <div class="container">
 	<div class="row clearfix">
 		<div class="col-md-7 column">
-			<div class="page-header">
-			  <h1>Stream上传插件 <small>bootstrap style demo</small></h1>
-			</div>
-
+        <div class="page-header">
+           <h1>cosmart 工作数据上传</h1>
+           <h5>(1)请先选择用户(默认public)和工作空间(默认worksapce)</h5>
+           <h5>(2)数据放在 /mnt/dev2/{用户名}/{workspace} 下, 默认路径为/mnt/dev2/public/workspace</h5>
+           <h5>(3)下载数据地址: 120.25.225.222:8000 在列表里 通过自己的用户名和工作空间找到文件</h5>
+        </div>
 			<div class="dropzone dz-clickable" id="i_stream_dropzone">
 			</div>
 
 			<div class="btn-toolbar" role="toolbar">
 				<div class="btn-group">
+				    <div class="btn-group">
+				    <button type="button" id="btnUser" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">用户名</button>
+                    <ul class="dropdown-menu">
+                       <li><a onclick="changeUser('ding')">ding</a></li>
+                       <li><a onclick="changeUser('fang')">fang</a></li>
+                       <li><a onclick="changeUser('miao')">miao</a></li>
+                    </ul>
+                    </div>
+                    <input  type="text" id="txtWork" class="form-control" placeholder="workspace name" width="100"> 
 					<button type="button" class="btn btn-default" id="i_select_files"><span class="glyphicon glyphicon-plus-sign"></span> 添加文件</button>
 					<button type="button" class="btn btn-default" onclick="javascript:_t.upload();"><span class="glyphicon glyphicon-upload"></span> 开始上传</button>
 					<button type="button" class="btn btn-default" onclick="javascript:_t.stop();"><span class="glyphicon glyphicon-stop"></span> 停止上传</button>
 					<button type="button" class="btn btn-default" onclick="javascript:_t.cancel();"><span class="glyphicon glyphicon-remove-sign"></span> 取消上传</button>
+				    
 				</div>
+				<!-- 
 				<div class="btn-group">
 					<button type="button" class="btn btn-default" onclick="javascript:_t.disable();"><span class="glyphicon glyphicon-minus-sign"></span> 禁用选择</button>
 					<button type="button" class="btn btn-default" onclick="javascript:_t.enable();"><span class="glyphicon glyphicon-ok-sign"></span> 激活选择</button>
@@ -38,6 +51,7 @@
 					<button type="button" class="btn btn-default" onclick="javascript:_t.hideBrowseBlock();"><span class="glyphicon glyphicon-minus-sign"></span> 隐藏文件选择</button>
 					<button type="button" class="btn btn-default" onclick="javascript:_t.showBrowseBlock();"><span class="glyphicon glyphicon-ok-sign"></span> 显示文件选择</button>
 				</div>
+				-->
 			</div>
 
 			<table id="data_table" class="table tablesorter">
@@ -64,38 +78,41 @@
 				</tfoot>
 			</table>
 		</div>
-		
-		<div class="col-md-5 column">
-			<p>Bootstrap是目前十分流行的前端技术，具有功能强大，易上手，样式齐全等等特征。此前<strong>Stream上传插件</strong>是套用网易的上传UI，虽然满足了大多数人的需要，但是在某些情况下，UI风格不符合，导致放弃。所以在<strong>Stream上传插件</strong>的新版本<strong>stream-v1.4.*</strong>就开始支持自定义UI。
-			当然，修改了一下响应函数，也新增了一些！<br>
-			新增：
-				<ol>
-				  <li><code>config.customered</code></li>
-				  <li><code>config.onAddTask: function(file){}</code></li>
-				  <li><pre>var _t = new Stream(config); <br>_t.bStreaming (true: html5方式上传)</pre></li>
-				  <li><code>_t.bDraggable (true: 浏览器支持拖拽上传)</code></li>
-				</ol>
-			</p>
-            
-			<div id="i_error_tips" class="alert alert-success alert-dismissable">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-				<strong> 提示： </strong> <span class="text-message"><span> 
-			</div>
-		</div>
 	</div>	
 </div>
 
 <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/stream-v1.js"></script>
+<script type="text/javascript" src="./js/stream-v1.js"></script>
 <script type="text/javascript">
 /**
  * 配置文件（如果没有默认字样，说明默认值就是注释下的值）
  * 但是，on*（onSelect， onMaxSizeExceed...）等函数的默认行为
  * 是在ID为i_stream_message_container的页面元素中写日志
  */
+    $("#txtWork").change(function(){
+    	var user= $("#btnUser").html();
+    	if(user=="用户名")
+    		user="public";
+      var workspace = $("#txtWork").val().trim();
+   	  if(workspace=="")
+   	    config.postVarsPerFile.userId=user+$("#txtWork").val();
+   	  else
+   	    config.postVarsPerFile.userId=user+"/"+$("#txtWork").val();
+	 })
  
+    function changeUser(nIndex){
+    	 $("#btnUser").html(nIndex); 
+    	 var workspace = $("#txtWork").val().trim();
+    	 if(workspace=="")
+    	   config.postVarsPerFile.userId=nIndex+$("#txtWork").val();
+    	 else
+    	   config.postVarsPerFile.userId=nIndex+"/"+$("#txtWork").val();
+	}
 	var config = {
+		postVarsPerFile : { /** 上传文件时传入的参数，默认: {} */
+	        userId: "public/worksapce"
+	    },
 		enabled: true, /** 是否启用文件选择，默认是true */
 		customered: true,
 		multipleFiles: true, /** 是否允许同时选择多个文件，默认是false */	
@@ -110,6 +127,9 @@
 		dragAndDropArea: "i_stream_dropzone",
 		filesQueueId : "i_stream_files_queue", /** 文件上传进度显示框ID，非自定义UI有效(customered:false) */
 		filesQueueHeight : 450, /** 文件上传进度显示框的高，非自定义UI有效(customered:false)，默认450px */
+		tokenURL : "/stream/tk", /** 根据文件名、大小等信息获取Token的URI（用于生成断点续传、跨域的令牌） */
+	    frmUploadURL : "/fd;", /** Flash上传的URI */
+	    uploadURL : "/stream/upload", /** HTML5上传的URI */
 		messagerId : "i_stream_message_container", /** 消息框的Id，当没有自定义onXXX函数，系统会显示onXXX的部分提示信息，如果没有i_stream_message_container则不显示 */
 //		frmUploadURL : "http://customers.duapp.com/fd;", /** Flash上传的URI */
 //      uploadURL : "http://customers.duapp.com/upload",

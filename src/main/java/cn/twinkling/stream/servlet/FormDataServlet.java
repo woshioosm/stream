@@ -74,7 +74,7 @@ public class FormDataServlet extends HttpServlet {
 					System.out.println(name + ":" + value);
 				} else {
 					String fileName = item.getName();
-					start = IoUtil.streaming(in, token, fileName);
+					start = IoUtil.streaming(in, token, fileName,"public");
 				}
 			}
 		} catch (FileUploadException fne) {
